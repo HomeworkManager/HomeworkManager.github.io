@@ -2,11 +2,13 @@
   "name": "homeworkmanager.github.io",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://homeworkmanager.github.io",
   "dependencies": {
     "@material-ui/core": "*",
     "@testing-library/jest-dom": "*",
     "@testing-library/react": "*",
     "@testing-library/user-event": "*",
+    "gh-pages": "*",
     "react": "*",
     "react-dom": "*",
     "react-scripts": "*",
@@ -25,6 +27,8 @@
     "workbox-streams": "*"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
