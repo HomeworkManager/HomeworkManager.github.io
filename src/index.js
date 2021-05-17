@@ -1,17 +1,19 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import Login from './login';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
-import reportWebVitals from './reportWebVitals';
-import { CssBaseline } from '@material-ui/core';
+import React, { StrictMode } from "react";
+import ReactDOM from "react-dom";
+import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
+import App from "./app";
+import { ThemeProvider } from "@material-ui/styles";
+import theme from "./theme";
+
+console.log(sessionStorage.getItem("email"));
 
 ReactDOM.render(
-  <React.StrictMode>
-    <CssBaseline />
-    <Login />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <StrictMode>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </StrictMode>,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change
@@ -22,4 +24,4 @@ serviceWorkerRegistration.register();
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
 // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// reportWebVitals();
