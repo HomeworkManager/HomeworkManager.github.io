@@ -1,25 +1,28 @@
-import { CssBaseline } from "@material-ui/core";
-import { BrowserRouter, Route, Switch } from "react-router-dom";
-import Assignments from "./assignments";
-import Login from "./login";
+import { CssBaseline, LinearProgress } from "@material-ui/core";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
+const Assignments = lazy(() => import("./assignments"));
+const Login = lazy(() => import("./login"));
+const CreateAccount = lazy(() => import("./create-account"));
 
 export default function App() {
   return (
     <BrowserRouter>
       <CssBaseline />
-      {!sessionStorage.getItem("access_token") ? (
+      <Suspense fallback={<LinearProgress color="secondary" />}>
         <Switch>
-          <Route>
-            <Login path="/login" />
+          <Redirect exact from="/" to="/assignments" />
+          <Route path="/login">
+            <Login />
           </Route>
-        </Switch>
-      ) : (
-        <Switch>
+          <Route path="/create-account">
+            <CreateAccount />
+          </Route>
           <Route path="/assignments">
             <Assignments />
           </Route>
         </Switch>
-      )}
+      </Suspense>
     </BrowserRouter>
   );
 }
