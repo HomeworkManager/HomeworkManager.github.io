@@ -80,14 +80,9 @@ export default function Assignments() {
       >
         <Add />
       </Fab>
-      <Dialog open={dialogueOpen} onClose={() => setDialogueOpen(false)}>
+      <Dialog open={dialogueOpen}>
         <DialogTitle disableTypography>
           <Typography variant="h6">New Assignment</Typography>
-          {!dialogueOpen ? (
-            <IconButton>
-              <Close />
-            </IconButton>
-          ) : null}
         </DialogTitle>
         <DialogContent dividers>
           <TextField
@@ -108,13 +103,19 @@ export default function Assignments() {
               label="Due Date"
               value={form.dueDate}
               onChange={(date) => setForm({ ...form, dueDate: date })}
-              KeyboardButtonProps={{
-                "aria-label": "change date",
-              }}
             />
           </MuiPickersUtilsProvider>
         </DialogContent>
         <DialogActions>
+          <Button
+            onClick={() => {
+              setDialogueOpen(false);
+              setForm({});
+            }}
+            color="primary"
+          >
+            Cancel
+          </Button>
           <Button color="primary" onClick={newAssignment}>
             Add
           </Button>
@@ -126,7 +127,7 @@ export default function Assignments() {
 
 function formatDate(date) {
   // Remove time from date
-  date = new Date(date.toDateString());
+  date = new Date(new Date(date).toDateString());
 
   let today = new Date();
 
