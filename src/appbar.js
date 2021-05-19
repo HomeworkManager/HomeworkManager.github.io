@@ -42,7 +42,7 @@ export default function Appbar({ title }) {
               <ListItemIcon>
                 <AccountCircle />
               </ListItemIcon>
-              <ListItemText primary={"User Name"} />
+              <ListItemText primary={app.currentUser.profile.name} />
             </ListItem>
           </List>
           <Divider />

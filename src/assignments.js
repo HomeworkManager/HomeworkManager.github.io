@@ -2,6 +2,7 @@ import DateFnsUtils from "@date-io/date-fns";
 import {
   Button,
   Checkbox,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -11,11 +12,12 @@ import {
   List,
   ListItem,
   ListItemIcon,
+  ListItemSecondaryAction,
   ListItemText,
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Close } from "@material-ui/icons";
+import { Add, Close, Edit } from "@material-ui/icons";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { useEffect, useState } from "react";
 import Appbar from "./appbar";
@@ -23,16 +25,18 @@ import app from "./mongodb";
 
 export default function Assignments() {
   const [assignments, setAssignments] = useState([]);
-  const [dialogueOpen, setDialogueOpen] = useState(false);
+  const [addDialogueOpen, setAddDialogueOpen] = useState(false);
+  const [editDialogueOpen, setEditDialogueOpen] = useState(false);
   const [form, setForm] = useState({});
 
   const db = app.currentUser?.mongoClient("mongodb-atlas").db("HomeworkManager");
 
   useEffect(() => {
-    db.collection("Assignments")
-      .find({}, { sort: { completed: 1, dueDate: 1 }, completed: true, dueDate: true, name: true })
-      .then(setAssignments);
-  }, [dialogueOpen, db]);
+    if (!addDialogueOpen && !editDialogueOpen)
+      db.collection("Assignments")
+        .find({}, { sort: { completed: 1, dueDate: 1 }, completed: true, dueDate: true, name: true })
+        .then(setAssignments);
+  }, [addDialogueOpen, editDialogueOpen, db]);
 
   function toggleCompletion(_id, value, idx) {
     db.collection("Assignments")
@@ -50,37 +54,75 @@ export default function Assignments() {
       .insertOne({ ...form, completed: false, user_id: app.currentUser.id })
       .then(() => {
         setForm({});
-        setDialogueOpen(false);
+        setAddDialogueOpen(false);
       });
+  }
+
+  function editAssignment(e) {
+    e.preventDefault();
+    db.collection("Assignments")
+      .updateOne({ _id: form._id }, { ...form })
+      .then(() => {
+        setForm({});
+        setEditDialogueOpen(false);
+      });
+  }
+
+  function deleteAssignment(e) {
+    e.preventDefault();
+    db.collection("Assignments")
+      .deleteOne({ _id: form._id })
+      .then(() => {
+        setForm({});
+        setEditDialogueOpen(false);
+      });
+  }
+
+  function openEditDialogue(_id) {
+    setForm(assignments.find((x) => x._id.equals(_id)));
+    setEditDialogueOpen(true);
   }
 
   return (
     <>
       <Appbar title="Assignments" />
-      <List>
-        {assignments.map(({ _id, name, dueDate, completed }, idx) => (
-          <ListItem key={idx}>
-            <ListItemIcon>
-              <Checkbox
-                edge="start"
-                checked={completed}
-                onChange={() => {
-                  toggleCompletion(_id, !completed, idx);
-                }}
-              />
-            </ListItemIcon>
-            <ListItemText primary={name} secondary={formatDate(dueDate)} />
-          </ListItem>
-        ))}
-      </List>
-      <Fab
-        color="secondary"
-        style={{ position: "absolute", bottom: "33px", right: "33px" }}
-        onClick={() => setDialogueOpen(true)}
-      >
-        <Add />
-      </Fab>
-      <Dialog open={dialogueOpen}>
+      <Container maxWidth="sm">
+        <List>
+          {assignments.length ? (
+            assignments.map(({ _id, name, dueDate, completed }, idx) => (
+              <ListItem key={idx}>
+                <ListItemIcon>
+                  <Checkbox
+                    edge="start"
+                    checked={completed}
+                    onChange={() => {
+                      toggleCompletion(_id, !completed, idx);
+                    }}
+                  />
+                </ListItemIcon>
+                <ListItemText primary={name} secondary={formatDate(dueDate)} />
+                <ListItemSecondaryAction>
+                  <IconButton edge="end" onClick={() => openEditDialogue(_id)}>
+                    <Edit />
+                  </IconButton>
+                </ListItemSecondaryAction>
+              </ListItem>
+            ))
+          ) : (
+            <div style={{ textAlign: "center" }}>
+              <Typography variant="h6">You have no assignments right now!</Typography>
+            </div>
+          )}
+        </List>
+        <Fab
+          color="secondary"
+          style={{ position: "absolute", bottom: "33px", right: "33px" }}
+          onClick={() => setAddDialogueOpen(true)}
+        >
+          <Add />
+        </Fab>
+      </Container>
+      <Dialog open={addDialogueOpen}>
         <DialogTitle disableTypography>
           <Typography variant="h6">New Assignment</Typography>
         </DialogTitle>
@@ -109,7 +151,7 @@ export default function Assignments() {
         <DialogActions>
           <Button
             onClick={() => {
-              setDialogueOpen(false);
+              setAddDialogueOpen(false);
               setForm({});
             }}
             color="primary"
@@ -118,6 +160,51 @@ export default function Assignments() {
           </Button>
           <Button color="primary" onClick={newAssignment}>
             Add
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={editDialogueOpen}>
+        <DialogTitle disableTypography>
+          <Typography variant="h6">Edit Assignment</Typography>
+        </DialogTitle>
+        <DialogContent dividers>
+          <TextField
+            variant="standard"
+            margin="normal"
+            required
+            fullWidth
+            label="Name"
+            autoFocus
+            value={form.name || ""}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+          />
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <DatePicker
+              disableToolbar
+              variant="inline"
+              format="MM/dd/yyyy"
+              margin="normal"
+              label="Due Date"
+              value={form.dueDate}
+              onChange={(date) => setForm({ ...form, dueDate: date })}
+            />
+          </MuiPickersUtilsProvider>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={deleteAssignment} color="primary">
+            Delete
+          </Button>
+          <Button
+            onClick={() => {
+              setEditDialogueOpen(false);
+              setForm({});
+            }}
+            color="primary"
+          >
+            Cancel
+          </Button>
+          <Button color="primary" onClick={editAssignment}>
+            Change
           </Button>
         </DialogActions>
       </Dialog>

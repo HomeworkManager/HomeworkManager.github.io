@@ -1,5 +1,5 @@
 import { CssBaseline, LinearProgress } from "@material-ui/core";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
 import app from "./mongodb";
 const Assignments = lazy(() => import("./assignments"));

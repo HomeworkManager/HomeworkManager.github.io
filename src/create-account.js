@@ -15,6 +15,7 @@ export default function CreateAccount() {
     try {
       try {
         await app.emailPasswordAuth.registerUser(email, password);
+        app.currentUser.profile.name = name;
         history.push("/login");
       } catch {}
     } catch {}
