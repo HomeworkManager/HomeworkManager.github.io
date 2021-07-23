@@ -17,7 +17,7 @@ import {
   TextField,
   Typography,
 } from "@material-ui/core";
-import { Add, Close, Edit } from "@material-ui/icons";
+import { Add, Edit } from "@material-ui/icons";
 import { DatePicker, MuiPickersUtilsProvider } from "@material-ui/pickers";
 import { useEffect, useState } from "react";
 import Appbar from "./appbar";
@@ -51,7 +51,7 @@ export default function Assignments() {
   function newAssignment(e) {
     e.preventDefault();
     db.collection("Assignments")
-      .insertOne({ ...form, completed: false, user_id: app.currentUser.id })
+      .insertOne({ ...form, completed: false, user_id: app.currentUser?.id })
       .then(() => {
         setForm({});
         setAddDialogueOpen(false);

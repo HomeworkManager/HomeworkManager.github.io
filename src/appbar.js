@@ -30,27 +30,25 @@ export default function Appbar({ title }) {
         </Typography>
       </Toolbar>
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <div style={{ width: 200 }}>
-          <List>
-            <ListItem
-              button
-              onClick={() => {
-                app.currentUser?.logOut();
-                history.push("/login");
-              }}
-            >
-              <ListItemIcon>
-                <AccountCircle />
-              </ListItemIcon>
-              <ListItemText primary={app.currentUser.profile.name} />
-            </ListItem>
-          </List>
-          <Divider />
-          <List>
-            <ListItem button>Assignments</ListItem>
-            <ListItem button>Classes</ListItem>
-          </List>
-        </div>
+        <List>
+          <ListItem
+            button
+            onClick={() => {
+              app.currentUser?.logOut();
+              history.push("/login");
+            }}
+          >
+            <ListItemIcon>
+              <AccountCircle />
+            </ListItemIcon>
+            <ListItemText primary={app.currentUser?.profile.email} />
+          </ListItem>
+        </List>
+        <Divider />
+        <List>
+          <ListItem button>Assignments</ListItem>
+          <ListItem button>Classes</ListItem>
+        </List>
       </Drawer>
     </AppBar>
   );

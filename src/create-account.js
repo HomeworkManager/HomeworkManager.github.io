@@ -6,18 +6,14 @@ import app from "./mongodb";
 
 export default function CreateAccount() {
   const history = useHistory();
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   async function submit(e) {
     e.preventDefault();
     try {
-      try {
-        await app.emailPasswordAuth.registerUser(email, password);
-        app.currentUser.profile.name = name;
-        history.push("/login");
-      } catch {}
+      await app.emailPasswordAuth.registerUser(email, password);
+      history.push("/login");
     } catch {}
   }
 
@@ -28,7 +24,7 @@ export default function CreateAccount() {
           <Typography component="h1" variant="h5">
             Create Account
           </Typography>
-          <TextField
+          {/* <TextField
             variant="outlined"
             margin="normal"
             required
@@ -38,7 +34,7 @@ export default function CreateAccount() {
             name="name"
             autoFocus
             onChange={(e) => setName(e.target.value)}
-          />
+          /> */}
           <TextField
             variant="outlined"
             margin="normal"

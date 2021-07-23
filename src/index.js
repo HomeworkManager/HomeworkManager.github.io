@@ -5,8 +5,6 @@ import App from "./app";
 import { ThemeProvider } from "@material-ui/styles";
 import theme from "./theme";
 
-console.log(sessionStorage.getItem("email"));
-
 ReactDOM.render(
   <StrictMode>
     <ThemeProvider theme={theme}>
